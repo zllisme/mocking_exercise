@@ -7,7 +7,16 @@ import java.util.List;
 
 public class SalesApp {
 
-	public void generateSalesActivityReport(String salesId, int maxRow, boolean isNatTrade, boolean isSupervisor) {
+    private SalesReportDao salesReportDao;
+
+    private SalesDao salesDao;
+
+    public SalesApp() {
+        this.salesReportDao = new SalesReportDao();
+        this.salesDao = new SalesDao();
+    }
+
+    public void generateSalesActivityReport(String salesId, int maxRow, boolean isNatTrade, boolean isSupervisor) {
 
 		if (salesId == null) {
 			return;
@@ -23,11 +32,11 @@ public class SalesApp {
 
 		List<SalesReportData> reportDataList = getSalesReportDataList(sales);
 
-		List<SalesReportData> tempList = getSalesReportDataByMaxRow(maxRow, reportDataList);
-		reportDataList = tempList;
-
 		List<SalesReportData> filteredReportDataList = getFilteredReportDataList(isSupervisor, reportDataList);
 		reportDataList = filteredReportDataList;
+
+		List<SalesReportData> tempList = getSalesReportDataByMaxRow(maxRow, reportDataList);
+		reportDataList = tempList;
 
 		List<String> headers = getHeaders(isNatTrade);
 		SalesActivityReport report = this.generateReport(headers, reportDataList);
@@ -37,15 +46,15 @@ public class SalesApp {
 		
 	}
 
-	private List<SalesReportData> getSalesReportDataByMaxRow(int maxRow, List<SalesReportData> reportDataList) {
+	public List<SalesReportData> getSalesReportDataByMaxRow(int maxRow, List<SalesReportData> reportDataList) {
 		List<SalesReportData> tempList = new ArrayList<SalesReportData>();
-		for (int i=0; i < reportDataList.size() || i < maxRow; i++) {
+		for (int i=0; i < reportDataList.size() && i < maxRow; i++) {
 			tempList.add(reportDataList.get(i));
 		}
 		return tempList;
 	}
 
-	private List<SalesReportData> getFilteredReportDataList(boolean isSupervisor, List<SalesReportData> reportDataList) {
+	public List<SalesReportData> getFilteredReportDataList(boolean isSupervisor, List<SalesReportData> reportDataList) {
 		List<SalesReportData> filteredReportDataList = new ArrayList<SalesReportData>();
 
 		for (SalesReportData data : reportDataList) {
@@ -62,17 +71,16 @@ public class SalesApp {
 		return filteredReportDataList;
 	}
 
-	private List<SalesReportData> getSalesReportDataList(Sales sales) {
-		SalesReportDao salesReportDao = new SalesReportDao();
+
+	public List<SalesReportData> getSalesReportDataList(Sales sales) {
 		return salesReportDao.getReportData(sales);
 	}
 
-	private Sales getSales(String salesId) {
-		SalesDao salesDao = new SalesDao();
+	public Sales getSales(String salesId) {
 		return salesDao.getSalesBySalesId(salesId);
 	}
 
-	private List<String> getHeaders(boolean isNatTrade) {
+	public List<String> getHeaders(boolean isNatTrade) {
 		List<String> headers = null;
 
 		if (isNatTrade) {
