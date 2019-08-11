@@ -11,4 +11,9 @@ public class SalesAppTest {
 		salesApp.generateSalesActivityReport("DUMMY", 1000, false, false);
 		
 	}
+
+	@Test
+	public void name() {
+
+	}
 }
