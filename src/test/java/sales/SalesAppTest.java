@@ -8,9 +8,8 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import javax.xml.crypto.Data;
+import java.util.*;
 
 import static org.mockito.Matchers.any;
 
@@ -118,6 +117,25 @@ public class SalesAppTest {
 		//then
 		Mockito.verify(salesDao, Mockito.times(1)).getSalesBySalesId(any());
 	}
+
+	@Test
+	public void testIsSaleValid_givenSalesEffectiveToBeforeToday_thenReturnFalse() {
+		//given
+		String salesId = "test";
+		Sales sales = Mockito.mock(Sales.class);
+		Date beforeToday = new Date();
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(beforeToday);
+		calendar.add(Calendar.DAY_OF_MONTH, -1);
+		beforeToday = calendar.getTime();
+		Mockito.when(sales.getEffectiveTo()).thenReturn(beforeToday);
+		//when
+		boolean result = salesApp.isSaleValid(salesId, sales);
+		//then
+		Assert.assertFalse(result);
+	}
+
+
 
 
 }

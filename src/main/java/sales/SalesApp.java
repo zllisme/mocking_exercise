@@ -17,19 +17,10 @@ public class SalesApp {
     }
 
     public void generateSalesActivityReport(String salesId, int maxRow, boolean isNatTrade, boolean isSupervisor) {
-
-		if (salesId == null) {
-			return;
-		}
-
 		Sales sales = getSales(salesId);
-
-		Date today = new Date();
-		if (today.after(sales.getEffectiveTo())
-				|| today.before(sales.getEffectiveFrom())){
+		if(!isSaleValid(salesId, sales)) {
 			return;
 		}
-
 		List<SalesReportData> reportDataList = getSalesReportDataList(sales);
 
 		List<SalesReportData> filteredReportDataList = getFilteredReportDataList(isSupervisor, reportDataList);
@@ -44,6 +35,20 @@ public class SalesApp {
 		EcmService ecmService = new EcmService();
 		ecmService.uploadDocument(report.toXml());
 		
+	}
+
+	public boolean isSaleValid(String salesId, Sales sales) {
+		boolean result = true;
+    	if (salesId == null) {
+			result = false;
+		}
+
+		Date today = new Date();
+		if (today.after(sales.getEffectiveTo())
+				|| today.before(sales.getEffectiveFrom())){
+			result = false;
+		}
+		return result;
 	}
 
 	public List<SalesReportData> getSalesReportDataByMaxRow(int maxRow, List<SalesReportData> reportDataList) {
